@@ -65,5 +65,24 @@ pub fn part1(input: &str) -> Result<String, String> {
     Ok(res.to_string())
 }
 pub fn part2(input: &str) -> Result<String, String> {
-    todo!()
+    let games = parse_file(input).ok_or("Failed to parse file".to_string())?;
+    let res: u32 = games
+        .iter()
+        .map(|game| {
+            let (mut mr, mut mg, mut mb) = (0, 0, 0);
+            for &Set(r, g, b) in &game.sets {
+                if r > mr {
+                    mr = r
+                }
+                if g > mg {
+                    mg = g
+                }
+                if b > mb {
+                    mb = b
+                }
+            }
+            mr * mg * mb
+        })
+        .sum();
+    Ok(res.to_string())
 }
