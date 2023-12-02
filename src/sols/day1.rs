@@ -57,3 +57,18 @@ pub fn part2(input: &str) -> Result<String, String> {
         .ok_or("Failed to parse file")?;
     Ok(result.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_part1() {
+        let example_input = "1abc2\npqr3stu8vwx\na1b2c3d4e5f\ntreb7uchet";
+        assert_eq!(part1(example_input).unwrap(), "142");
+    }
+    #[test]
+    fn test_part2() {
+        let example_input = "two1nine\neightwothree\nabcone2threexyz\nxtwone3four\n4nineeightseven2\nzoneight234\n7pqrstsixteen";
+        assert_eq!(part2(example_input).unwrap(), "281");
+    }
+}
