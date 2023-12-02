@@ -1,4 +1,4 @@
-pub fn parse_string<'a>(s: &'a str, expected: &str) -> Option<(&'a str, &'a str)> {
+pub fn parse_const<'a>(s: &'a str, expected: &str) -> Option<(&'a str, &'a str)> {
     s.strip_prefix(expected).map(|x| (&s[..expected.len()], x))
 }
 
@@ -11,7 +11,7 @@ pub fn parse_unsigned_int(s: &str) -> Option<(u32, &'_ str)> {
 }
 
 pub fn parse_int(s: &str) -> Option<(i32, &'_ str)> {
-    let (negative, s) = match parse_string(s, "-") {
+    let (negative, s) = match parse_const(s, "-") {
         Some((_, rest)) => (-1, rest),
         None => (1, s),
     };
@@ -26,7 +26,7 @@ pub fn parse_collection<'a, T>(
 ) -> Option<(Vec<T>, &'a str)> {
     let (v, s) = parser(s)?;
     let s2 = s.trim_start();
-    let s = match parse_string(s2, seprator) {
+    let s = match parse_const(s2, seprator) {
         Some((_, s)) => s.trim_start(),
         None => return Some((vec![v], s)),
     };
@@ -47,13 +47,13 @@ pub fn parse_delimited<'a, T>(
     parser: impl Fn(&'a str) -> Option<(T, &'a str)>,
 ) -> Option<(T, &'a str)> {
     let s = match trim {
-        true => parse_string(s, open).map(|(_, s)| s.trim_start())?,
-        false => parse_string(s, open).map(|(_, s)| s)?,
+        true => parse_const(s, open).map(|(_, s)| s.trim_start())?,
+        false => parse_const(s, open).map(|(_, s)| s)?,
     };
     let (v, s) = parser(s)?;
     let s = match trim {
-        true => parse_string(s.trim_start(), close).map(|(_, s)| s)?,
-        false => parse_string(s, close).map(|(_, s)| s)?,
+        true => parse_const(s.trim_start(), close).map(|(_, s)| s)?,
+        false => parse_const(s, close).map(|(_, s)| s)?,
     };
     Some((v, s))
 }
@@ -66,12 +66,12 @@ pub fn parse_eof(s: &str) -> Option<((), &'_ str)> {
 mod tests {
     use super::*;
     #[test]
-    fn test_parse_string() {
+    fn test_parse_const() {
         assert_eq!(
-            parse_string("helloworld", "hello").unwrap(),
+            parse_const("helloworld", "hello").unwrap(),
             ("hello", "world")
         );
-        assert!(parse_string("worldhello", "hello").is_none())
+        assert!(parse_const("worldhello", "hello").is_none())
     }
     #[test]
     fn test_parse_unsigined_int() {
@@ -103,22 +103,22 @@ mod tests {
     #[test]
     fn test_parse_delimited() {
         assert_eq!(
-            parse_delimited("(hello)", "(", ")", true, |x| parse_string(x, "hello")).unwrap(),
+            parse_delimited("(hello)", "(", ")", true, |x| parse_const(x, "hello")).unwrap(),
             ("hello", "")
         );
         assert_eq!(
-            parse_delimited("(  hello     )", "(", ")", true, |x| parse_string(
+            parse_delimited("(  hello     )", "(", ")", true, |x| parse_const(
                 x, "hello"
             ))
             .unwrap(),
             ("hello", "")
         );
         assert_eq!(
-            parse_delimited("(hello)", "(", ")", false, |x| parse_string(x, "hello")).unwrap(),
+            parse_delimited("(hello)", "(", ")", false, |x| parse_const(x, "hello")).unwrap(),
             ("hello", "")
         );
         assert!(
-            parse_delimited("(  hello     )", "(", ")", false, |x| parse_string(
+            parse_delimited("(  hello     )", "(", ")", false, |x| parse_const(
                 x, "hello"
             ))
             .is_none(),
