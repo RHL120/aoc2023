@@ -14,7 +14,7 @@ fn parse_args() -> Option<(usize, usize, String)> {
     }
 }
 
-const SOLVERS: &[&[fn(&str) -> Result<String, String>]] = &[&[]];
+const SOLVERS: &[&[fn(&str) -> Result<String, String>]] = &[&[day1::part1]];
 fn main() -> Result<(), String> {
     let usage_string = "Usage: ./aoc2023 <day> <part> <input>";
     let args: Vec<String> = env::args().collect();
