@@ -5,7 +5,7 @@ pub fn parse_const<'a>(s: &'a str, expected: &str) -> Option<(&'a str, &'a str)>
 pub fn parse_unsigned_int(s: &str) -> Option<(u32, &'_ str)> {
     let x = s
         .chars()
-        .take_while(|c: &char| c.is_digit(10))
+        .take_while(|c: &char| c.is_ascii_digit())
         .collect::<String>();
     Some((x.parse().ok()?, &s[x.len()..]))
 }

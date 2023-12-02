@@ -2,6 +2,8 @@ use aoc2023::sols::*;
 use std::env;
 use std::fs;
 
+type Solver = fn(&str) -> Result<String, String>;
+
 fn parse_args() -> Option<(usize, usize, String)> {
     let args: Vec<String> = env::args().collect();
     let day: usize = args.get(1).and_then(|x| x.parse().ok())?;
@@ -14,11 +16,9 @@ fn parse_args() -> Option<(usize, usize, String)> {
     }
 }
 
-const SOLVERS: &[&[fn(&str) -> Result<String, String>]] =
-    &[&[day1::part1, day1::part2], &[day2::part1, day2::part2]];
+const SOLVERS: &[&[Solver]] = &[&[day1::part1, day1::part2], &[day2::part1, day2::part2]];
 fn main() -> Result<(), String> {
     let usage_string = "Usage: ./aoc2023 <day> <part> <input>";
-    let args: Vec<String> = env::args().collect();
     let (day, part, input_path) = parse_args().ok_or(usage_string)?;
     let input =
         fs::read_to_string(&input_path).map_err(|_| format!("Failed to read {input_path}"))?;

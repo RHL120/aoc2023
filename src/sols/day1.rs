@@ -26,7 +26,7 @@ pub fn line_number(line: &str) -> Option<u32> {
     ];
     let chars: Vec<char> = line.chars().collect();
     let digits = (0..chars.len())
-        .map(|i| {
+        .flat_map(|i| {
             if let Some(digit) = chars[i].to_digit(10) {
                 vec![digit]
             } else {
@@ -43,11 +43,10 @@ pub fn line_number(line: &str) -> Option<u32> {
                     .collect()
             }
         })
-        .flatten()
         .collect::<Vec<u32>>();
-    let first = digits.get(0)?;
+    let first = digits.first()?;
     let last = digits.last()?;
-    return Some(first * 10 + last);
+    Some(first * 10 + last)
 }
 
 pub fn part2(input: &str) -> Result<String, String> {
