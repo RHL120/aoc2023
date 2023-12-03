@@ -1,7 +1,7 @@
 # RHL120's solutions for Advent of Code 2023
 - [X] [Day 1](https://github.com/RHL120/aoc2023/blob/master/src/sols/day1.rs)
 - [X] [Day 2](https://github.com/RHL120/aoc2023/blob/master/src/sols/day2.rs)
-- [ ] Day 3: *The problem is yet to be announced*
+- [X] [Day 3](https://github.com/RHL120/aoc2023/blob/master/src/sols/day3.rs)
 - [ ] Day 4: *The problem is yet to be announced*
 - [ ] Day 5: *The problem is yet to be announced*
 - [ ] Day 6: *The problem is yet to be announced*
