@@ -39,6 +39,20 @@ pub fn parse_collection<'a, T>(
     }
 }
 
+pub fn many<'a, T>(
+    s: &'a str,
+    parser: impl Fn(&'a str) -> Option<(T, &'a str)>,
+) -> Option<(Vec<T>, &'a str)> {
+    let (value, s) = parser(s)?;
+    match many(s, parser) {
+        Some((mut rest, s)) => {
+            rest.insert(0, value);
+            Some((rest, s))
+        }
+        None => Some((vec![value], s)),
+    }
+}
+
 pub fn parse_delimited<'a, T>(
     s: &'a str,
     open: &str,
