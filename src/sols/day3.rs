@@ -90,3 +90,17 @@ pub fn part2(input: &str) -> Result<String, String> {
     }
     Ok(res.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    const TEST_INPUT: &str = "467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598..\n";
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(TEST_INPUT).unwrap(), "4361");
+    }
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(TEST_INPUT).unwrap(), "467835");
+    }
+}
