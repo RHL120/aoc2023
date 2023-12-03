@@ -16,7 +16,11 @@ fn parse_args() -> Option<(usize, usize, String)> {
     }
 }
 
-const SOLVERS: &[&[Solver]] = &[&[day1::part1, day1::part2], &[day2::part1, day2::part2]];
+const SOLVERS: &[&[Solver]] = &[
+    &[day1::part1, day1::part2],
+    &[day2::part1, day2::part2],
+    &[day3::part1, day3::part2],
+];
 fn main() -> Result<(), String> {
     let usage_string = "Usage: ./aoc2023 <day> <part> <input>";
     let (day, part, input_path) = parse_args().ok_or(usage_string)?;
