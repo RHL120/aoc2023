@@ -3,7 +3,7 @@ fn is_symbol(c: char) -> bool {
     c != '.' && !c.is_ascii_digit()
 }
 
-fn get_adj(data: &Vec<Vec<char>>, x: usize, y: usize) -> Vec<(usize, usize, char)> {
+fn get_adj(data: &[Vec<char>], x: usize, y: usize) -> Vec<(usize, usize, char)> {
     [
         (1, 0),
         (1, 1),
@@ -18,7 +18,7 @@ fn get_adj(data: &Vec<Vec<char>>, x: usize, y: usize) -> Vec<(usize, usize, char
     .filter_map(|&(dx, dy)| {
         let nx = x.checked_add_signed(dx)?;
         let ny = y.checked_add_signed(dy)?;
-        let t = data.get(ny)?.get(nx).map(|x| *x)?;
+        let t = data.get(ny)?.get(nx).copied()?;
         Some((nx, ny, t))
     })
     .collect()
