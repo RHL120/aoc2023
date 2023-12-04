@@ -1,5 +1,5 @@
 use crate::utils::parser;
-use std::collections::HashMap;
+use std::iter;
 type Card = (u32, Vec<u32>, Vec<u32>);
 fn parse_card(s: &str) -> Option<(Card, &'_ str)> {
     let (_, s) = parser::parse_const(s, "Card")?;
@@ -48,12 +48,13 @@ pub fn part1(input: &str) -> Result<String, String> {
     Ok(res.to_string())
 }
 
-fn matchings(game: &[(u32, Vec<u32>, Vec<u32>)]) -> HashMap<usize, usize> {
+fn matchings(game: &[(u32, Vec<u32>, Vec<u32>)]) -> Vec<usize> {
     game.iter()
-        .map(|(id, v1, v2)| ((*id as usize), num_matching(v1, v2)))
+        .map(|(_, v1, v2)| (num_matching(v1, v2)))
         .collect()
 }
 
+/*
 fn new_instances(card: usize, mats: &HashMap<usize, usize>) -> HashMap<usize, usize> {
     let mut ret = HashMap::new();
     for mat in 1..=mats[&card] {
@@ -72,22 +73,23 @@ fn new_instances(card: usize, mats: &HashMap<usize, usize>) -> HashMap<usize, us
     }
     ret
 }
+*/
+
+fn create_instances(cards: &mut [usize], current: usize, matches: &[usize]) {
+    for mat in 1..=matches[current] {
+        cards[current + mat] += 1;
+        create_instances(cards, current + mat, matches);
+    }
+}
 
 pub fn part2(input: &str) -> Result<String, String> {
     let game = parse_game(input).ok_or("Failed to parse game")?;
     let matches = matchings(&game);
-    let mut instances: HashMap<usize, usize> =
-        game.iter().map(|(id, _, _)| (*id as usize, 1)).collect();
-    for card in matches.keys() {
-        let ni = new_instances(*card, &matches);
-        for (k, v) in ni {
-            match instances.get(&k) {
-                Some(x) => instances.insert(k, x + v),
-                None => instances.insert(k, v),
-            };
-        }
+    let mut instances: Vec<usize> = iter::repeat(1).take(game.len()).collect();
+    for card in 0..game.len() {
+        create_instances(&mut instances, card, &matches);
     }
-    let res = instances.values().sum::<usize>();
+    let res = instances.iter().sum::<usize>();
     Ok(res.to_string())
 }
 
