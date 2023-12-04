@@ -1,6 +1,7 @@
 use crate::utils::parser;
 use std::collections::HashMap;
-fn parse_card(s: &str) -> Option<((u32, Vec<u32>, Vec<u32>), &'_ str)> {
+type Card = (u32, Vec<u32>, Vec<u32>);
+fn parse_card(s: &str) -> Option<(Card, &'_ str)> {
     let (_, s) = parser::parse_const(s, "Card")?;
     let (id, s) = parser::parse_unsigned_int(s.trim())?;
     let (_, s) = parser::parse_const(s, ":")?;
@@ -17,7 +18,7 @@ fn parse_card(s: &str) -> Option<((u32, Vec<u32>, Vec<u32>), &'_ str)> {
     Some(((id, list1, list2), s))
 }
 
-fn parse_game(s: &str) -> Option<Vec<(u32, Vec<u32>, Vec<u32>)>> {
+fn parse_game(s: &str) -> Option<Vec<Card>> {
     s.lines()
         .map(|s| {
             let (c, s) = parse_card(s)?;
@@ -27,7 +28,7 @@ fn parse_game(s: &str) -> Option<Vec<(u32, Vec<u32>, Vec<u32>)>> {
         .collect()
 }
 
-fn num_matching(w: &Vec<u32>, m: &Vec<u32>) -> usize {
+fn num_matching(w: &[u32], m: &[u32]) -> usize {
     m.iter().filter(|&x| w.contains(x)).count()
 }
 
@@ -40,14 +41,14 @@ pub fn part1(input: &str) -> Result<String, String> {
             if num == 0 {
                 0
             } else {
-                (2 as usize).pow((num - 1) as u32)
+                (2_usize).pow((num - 1) as u32)
             }
         })
         .sum::<usize>();
     Ok(res.to_string())
 }
 
-fn matchings(game: &Vec<(u32, Vec<u32>, Vec<u32>)>) -> HashMap<usize, usize> {
+fn matchings(game: &[(u32, Vec<u32>, Vec<u32>)]) -> HashMap<usize, usize> {
     game.iter()
         .map(|(id, v1, v2)| ((*id as usize), num_matching(v1, v2)))
         .collect()
@@ -86,7 +87,7 @@ pub fn part2(input: &str) -> Result<String, String> {
             };
         }
     }
-    let res = instances.iter().map(|(_, x)| *x).sum::<usize>();
+    let res = instances.values().sum::<usize>();
     Ok(res.to_string())
 }
 
