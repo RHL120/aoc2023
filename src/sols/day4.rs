@@ -54,27 +54,6 @@ fn matchings(game: &[(u32, Vec<u32>, Vec<u32>)]) -> Vec<usize> {
         .collect()
 }
 
-/*
-fn new_instances(card: usize, mats: &HashMap<usize, usize>) -> HashMap<usize, usize> {
-    let mut ret = HashMap::new();
-    for mat in 1..=mats[&card] {
-        let ni = card + mat;
-        match ret.get(&ni) {
-            Some(x) => ret.insert(ni, x + 1),
-            None => ret.insert(ni, 1),
-        };
-        let nis = new_instances(ni, mats);
-        for (k, v) in nis {
-            match ret.get(&k) {
-                Some(x) => ret.insert(k, x + v),
-                None => ret.insert(k, v),
-            };
-        }
-    }
-    ret
-}
-*/
-
 fn create_instances(cards: &mut [usize], current: usize, matches: &[usize]) {
     for mat in 1..=matches[current] {
         cards[current + mat] += 1;
