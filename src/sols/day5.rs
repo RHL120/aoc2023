@@ -1,69 +1,67 @@
-use crate::utils::parser;
-use std::collections::HashMap;
-use std::iter::repeat;
-#[derive(Debug, Clone, Copy)]
-struct Rng(u32, u32, u32);
+use core::ops::RangeInclusive;
+type Mapping = Vec<(RangeInclusive<usize>, RangeInclusive<usize>)>;
 #[derive(Debug)]
-struct Almanac {
-    seeds: Vec<u32>,
-    sections: HashMap<String, Vec<Rng>>,
-}
-fn parse_input(input: &str) -> Option<Almanac> {
-    let (_, s) = parser::parse_const(input, "seeds: ")?;
-    let (seeds, s) = parser::many(s, |s| parser::parse_unsigned_int(s.trim()))?;
-    let sections = s
-        .trim_start()
-        .split("\n\n")
-        .map(|s: &str| {
-            let (name, s) = parser::many(s, |s| {
-                if s.starts_with(':') {
-                    None
-                } else {
-                    Some((s.chars().next()?, &s[1..]))
-                }
-            })?;
-            let (_, s) = parser::parse_const(s.trim_start(), ":")?;
-            let ranges = parser::many(s.trim_start(), |s| {
-                let (src_start, s) = parser::parse_unsigned_int(s)
-                    .and_then(|(x, s)| parser::parse_const(s, " ").map(|(_, s)| (x, s)))?;
-                let (dst_start, s) = parser::parse_unsigned_int(s)
-                    .and_then(|(x, s)| parser::parse_const(s, " ").map(|(_, s)| (x, s)))?;
-                let (len, s) = parser::parse_unsigned_int(s)?;
-                Some((Rng(src_start, dst_start, len), s.trim_start()))
-            })?;
-            Some((name.iter().collect(), ranges.0))
-        })
-        .collect::<Option<HashMap<String, Vec<Rng>>>>()?;
-    Some(Almanac { seeds, sections })
-}
-pub fn part1(input: &str) -> Result<String, String> {
-    let data = parse_input(input).ok_or("Failed to parse file")?;
-    let mut locations: Vec<u32> = repeat(0).take(data.seeds.len()).collect();
-    for (idx, seed) in data.seeds.iter().enumerate() {
-        let maps = [
-            "seed-to-soil map",
-            "soil-to-fertilizer map",
-            "fertilizer-to-water map",
-            "water-to-light map",
-            "light-to-temperature map",
-            "temperature-to-humidity map",
-            "humidity-to-location map",
-        ];
-        let mut src = *seed;
-        for map in maps {
-            let secs = &data.sections[map];
-            for &Rng(dst_start, src_start, len) in secs {
-                if src >= src_start && src <= src_start + len {
-                    src = (src - src_start) + dst_start;
-                    break;
-                }
-            }
-        }
-        locations[idx] = src;
-    }
-    Ok(locations.iter().min().unwrap().to_string())
+struct Map {
+    mappings: Mapping,
 }
 
-pub fn part2(input: &str) -> Result<String, String> {
+impl Map {
+    fn get_value(&self, v: usize) -> usize {
+        self.mappings
+            .iter()
+            .find_map(|(dst, src)| src.contains(&v).then(|| (v - src.start() + dst.start())))
+            .unwrap_or(v)
+    }
+}
+
+#[derive(Debug)]
+struct Almanac {
+    seeds: Vec<usize>,
+    maps: Vec<Map>,
+}
+
+fn parse_input(src: &str) -> Option<Almanac> {
+    let mut sections = src.split("\n\n");
+    let seeds = sections
+        .next()?
+        .strip_prefix("seeds: ")?
+        .split(" ")
+        .map(|x| x.parse::<usize>().ok())
+        .collect::<Option<Vec<usize>>>()?;
+    let maps = sections
+        .map(|section| {
+            let mut ranges = section.lines();
+            ranges.next();
+            let mappings = ranges
+                .map(|range| {
+                    let mut values = range.split(" ").map(|x| x.parse::<usize>().ok());
+                    let dst = values.next()??;
+                    let src = values.next()??;
+                    let len = values.next()??;
+                    Some((dst..=dst + len, src..=src + len))
+                })
+                .collect::<Option<_>>()?;
+            Some(Map { mappings })
+        })
+        .collect::<Option<_>>()?;
+    Some(Almanac { seeds, maps })
+}
+
+pub fn part1(src: &str) -> Result<String, String> {
+    let data = parse_input(src).ok_or("Failed to parse file")?;
+    let res = data
+        .seeds
+        .iter()
+        .map(|&seed| {
+            data.maps
+                .iter()
+                .fold(seed, move |seed, map| map.get_value(seed))
+        })
+        .min()
+        .unwrap();
+    Ok(res.to_string())
+}
+
+pub fn part2(src: &str) -> Result<String, String> {
     todo!()
 }
