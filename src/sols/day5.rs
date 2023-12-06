@@ -12,6 +12,7 @@ impl Map {
             .find_map(|(dst, src)| src.contains(&v).then(|| (v - src.start() + dst.start())))
             .unwrap_or(v)
     }
+    #[allow(dead_code)]
     fn restrict(&self, rng: &RangeInclusive<usize>) -> Map {
         let mut ret = Map {
             mappings: Vec::new(),
@@ -98,6 +99,6 @@ pub fn part1(src: &str) -> Result<String, String> {
 }
 
 pub fn part2(src: &str) -> Result<String, String> {
-    let data = parse_input(src).ok_or("Failed to parse file")?;
+    let _data = parse_input(src).ok_or("Failed to parse file")?;
     todo!()
 }
