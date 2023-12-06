@@ -49,3 +49,17 @@ pub fn part2(input: &str) -> Result<String, String> {
         .count();
     Ok(res.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    const INPUT: &str = "Time:      7  15   30\nDistance:  9  40  200";
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(INPUT).unwrap(), "288");
+    }
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(INPUT).unwrap(), "71503");
+    }
+}
