@@ -1,6 +1,6 @@
 use core::ops::RangeInclusive;
 type Mapping = Vec<(RangeInclusive<usize>, RangeInclusive<usize>)>;
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct Map {
     mappings: Mapping,
 }
@@ -11,6 +11,41 @@ impl Map {
             .iter()
             .find_map(|(dst, src)| src.contains(&v).then(|| (v - src.start() + dst.start())))
             .unwrap_or(v)
+    }
+    fn restrict(&self, rng: &RangeInclusive<usize>) -> Map {
+        let mut ret = Map {
+            mappings: Vec::new(),
+        };
+        for (dst, src) in &self.mappings {
+            let start = *src.start().max(rng.start());
+            let end = *src.end().min(rng.end());
+            if start <= end {
+                ret.mappings.push((dst.clone(), start..=end));
+            }
+        }
+        ret
+    }
+    fn compose(&self, other: &Self) -> Self {
+        let mut res = Map {
+            mappings: Vec::new(),
+        };
+        let mappings = other
+            .mappings
+            .iter()
+            .map(|(dst, src)| {
+                let mappings = other
+                    .restrict(dst)
+                    .mappings
+                    .iter()
+                    .map(|(dst, _)| (dst.clone(), src.clone()))
+                    .collect();
+                Map { mappings }
+            })
+            .collect::<Vec<_>>();
+        for mut map in mappings {
+            res.mappings.append(&mut map.mappings);
+        }
+        todo!()
     }
 }
 
@@ -63,5 +98,6 @@ pub fn part1(src: &str) -> Result<String, String> {
 }
 
 pub fn part2(src: &str) -> Result<String, String> {
+    let data = parse_input(src).ok_or("Failed to parse file")?;
     todo!()
 }
