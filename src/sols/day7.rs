@@ -49,7 +49,7 @@ impl PartialOrd for Hand {
 impl Ord for Hand {
     fn cmp(&self, other: &Self) -> Ordering {
         assert_eq!(self.part2, other.part2);
-        let ord = match self.kind.cmp(&other.kind) {
+        match self.kind.cmp(&other.kind) {
             Ordering::Equal => self
                 .cards
                 .iter()
@@ -57,8 +57,7 @@ impl Ord for Hand {
                 .find_map(|(&c1, &c2)| (c1 != c2).then(|| c1.cmp(c2, self.part2)))
                 .unwrap_or(Ordering::Equal),
             x => x,
-        };
-        ord
+        }
     }
 }
 
@@ -81,53 +80,23 @@ impl Hand {
                 }
             }
         }
-        if hs.iter().any(|(_, &count)| count == 5) {
-            return Hand {
-                cards,
-                kind: 6,
-                part2,
-            };
-        }
-        if hs.iter().any(|(_, &count)| count == 4) {
-            return Hand {
-                cards,
-                kind: 5,
-                part2,
-            };
-        }
-        if hs.iter().any(|(_, &count)| count == 3) && hs.iter().any(|(_, &count)| count == 2) {
-            return Hand {
-                cards,
-                kind: 4,
-                part2,
-            };
-        }
-        if hs.iter().any(|(_, &count)| count == 3) {
-            return Hand {
-                cards,
-                kind: 3,
-                part2,
-            };
-        }
-        if hs.iter().filter(|(_, &count)| count == 2).count() == 2 {
-            return Hand {
-                cards,
-                kind: 2,
-                part2,
-            };
-        }
-        if hs.iter().any(|(_, &count)| count == 2) {
-            return Hand {
-                cards,
-                kind: 1,
-                part2,
-            };
-        }
-        Hand {
-            cards,
-            kind: 0,
-            part2,
-        }
+        let kind = if hs.iter().any(|(_, &count)| count == 5) {
+            6
+        } else if hs.iter().any(|(_, &count)| count == 4) {
+            5
+        } else if hs.iter().any(|(_, &count)| count == 3) && hs.iter().any(|(_, &count)| count == 2)
+        {
+            4
+        } else if hs.iter().any(|(_, &count)| count == 3) {
+            3
+        } else if hs.iter().filter(|(_, &count)| count == 2).count() == 2 {
+            2
+        } else if hs.iter().any(|(_, &count)| count == 2) {
+            1
+        } else {
+            0
+        };
+        Hand { cards, kind, part2 }
     }
 }
 
