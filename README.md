@@ -5,7 +5,7 @@
 - [X] [Day 4](https://github.com/RHL120/aoc2023/blob/master/src/sols/day4.rs)
 - [X] [Day 5 part 1](https://github.com/RHL120/aoc2023/blob/master/src/sols/day5.rs)
 - [X] [Day 6](https://github.com/RHL120/aoc2023/blob/master/src/sols/day6.rs)
-- [ ] Day 7: *The problem is yet to be announced*
+- [X] [Day 7](https://github.com/RHL120/aoc2023/blob/master/src/sols/day7.rs)
 - [ ] Day 8: *The problem is yet to be announced*
 - [ ] Day 9: *The problem is yet to be announced*
 - [ ] Day 10: *The problem is yet to be announced*
