@@ -65,10 +65,23 @@ impl Ord for Hand {
 
 impl Hand {
     fn new(cards: Vec<Card>, part2: bool) -> Self {
-        let hs = cards
+        let mut hs = cards
             .iter()
             .map(|x| (x, cards.iter().filter(move |&y| x == y).count()))
             .collect::<HashMap<_, _>>();
+        if part2 {
+            if let Some(&nj) = hs.get(&Card::J) {
+                let mx = hs
+                    .iter()
+                    .filter_map(|(&&a, &b)| (a != Card::J).then_some((a, b)))
+                    .max_by(|(_, c), (_, c2)| c.cmp(c2));
+                if let Some((crd, cnt)) = mx {
+                    hs.remove(&Card::J);
+                    let mx = hs.get_mut(&crd).unwrap();
+                    *mx = cnt + nj;
+                }
+            }
+        }
         if hs.iter().any(|(_, &count)| count == 5) {
             return Hand {
                 cards,
@@ -165,5 +178,12 @@ pub fn part1(input: &str) -> Result<String, String> {
 }
 
 pub fn part2(input: &str) -> Result<String, String> {
-    todo!()
+    let mut game = parse_input(input, true).ok_or("Failed to parse input")?;
+    game.sort_by(|(_, h1), (_, h2)| h1.cmp(h2));
+    let res: usize = game
+        .iter()
+        .enumerate()
+        .map(|(idx, (bid, _))| (idx + 1) * bid)
+        .sum();
+    Ok(res.to_string())
 }
