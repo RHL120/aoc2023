@@ -187,3 +187,17 @@ pub fn part2(input: &str) -> Result<String, String> {
         .sum();
     Ok(res.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    const INPUT: &str = "32T3K 765\nT55J5 684\nKK677 28\nKTJJT 220\nQQQJA 483";
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(INPUT).unwrap(), "6440");
+    }
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(INPUT).unwrap(), "5905");
+    }
+}
