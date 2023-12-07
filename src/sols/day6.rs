@@ -4,8 +4,9 @@ fn parse_input_part1(input: &str) -> Option<(Vec<usize>, Vec<usize>)> {
             .strip_prefix("Time:")
             .or_else(|| s.strip_prefix("Distance: "))?
             .trim()
-            .split(" ")
-            .filter_map(|x| (!x.is_empty()).then(|| x.parse::<usize>().ok()));
+            .split(' ')
+            .filter(|&x| (!x.is_empty()))
+            .map(|x| x.parse::<usize>().ok());
         s.collect::<Option<Vec<_>>>()
     });
     Some((data.next()??, data.next()??))
@@ -20,7 +21,7 @@ pub fn part1(input: &str) -> Result<String, String> {
             (1..t)
                 .filter_map(move |v| {
                     let d = v * (t - v);
-                    (d > record).then(|| d)
+                    (d > record).then_some(d)
                 })
                 .count()
         })
@@ -32,7 +33,7 @@ fn parse_input_part2(input: &str) -> Option<(usize, usize)> {
     let mut data = input.lines().map(|s| {
         s.strip_prefix("Time:")
             .or_else(|| s.strip_prefix("Distance: "))?
-            .replace(" ", "")
+            .replace(' ', "")
             .parse()
             .ok()
     });
@@ -44,7 +45,7 @@ pub fn part2(input: &str) -> Result<String, String> {
     let res = (1..time)
         .filter_map(move |v| {
             let d = v * (time - v);
-            (d > record).then(|| d)
+            (d > record).then_some(d)
         })
         .count();
     Ok(res.to_string())

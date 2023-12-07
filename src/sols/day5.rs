@@ -61,7 +61,7 @@ fn parse_input(src: &str) -> Option<Almanac> {
     let seeds = sections
         .next()?
         .strip_prefix("seeds: ")?
-        .split(" ")
+        .split(' ')
         .map(|x| x.parse::<usize>().ok())
         .collect::<Option<Vec<usize>>>()?;
     let maps = sections
@@ -70,7 +70,7 @@ fn parse_input(src: &str) -> Option<Almanac> {
             ranges.next();
             let mappings = ranges
                 .map(|range| {
-                    let mut values = range.split(" ").map(|x| x.parse::<usize>().ok());
+                    let mut values = range.split(' ').map(|x| x.parse::<usize>().ok());
                     let dst = values.next()??;
                     let src = values.next()??;
                     let len = values.next()??;

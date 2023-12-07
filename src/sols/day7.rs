@@ -43,6 +43,11 @@ struct Hand {
 }
 impl PartialOrd for Hand {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for Hand {
+    fn cmp(&self, other: &Self) -> Ordering {
         assert_eq!(self.part2, other.part2);
         let ord = match self.kind.cmp(&other.kind) {
             Ordering::Equal => self
@@ -53,13 +58,7 @@ impl PartialOrd for Hand {
                 .unwrap_or(Ordering::Equal),
             x => x,
         };
-        Some(ord)
-    }
-}
-
-impl Ord for Hand {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap()
+        ord
     }
 }
 
@@ -136,7 +135,7 @@ fn parse_input(input: &str, part2: bool) -> Option<Vec<(usize, Hand)>> {
     input
         .lines()
         .map(|line| {
-            let mut data = line.split(" ");
+            let mut data = line.split(' ');
             let hand = data
                 .next()?
                 .chars()
