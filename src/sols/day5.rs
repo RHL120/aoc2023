@@ -12,41 +12,18 @@ impl Map {
             .find_map(|(dst, src)| src.contains(&v).then(|| (v - src.start() + dst.start())))
             .unwrap_or(v)
     }
-    #[allow(dead_code)]
-    fn restrict(&self, rng: &RangeInclusive<usize>) -> Map {
-        let mut ret = Map {
-            mappings: Vec::new(),
-        };
+    fn get_range(&self, rng: RangeInclusive<usize>) -> Self {
+        let mut mappings = Vec::new();
         for (dst, src) in &self.mappings {
             let start = *src.start().max(rng.start());
             let end = *src.end().min(rng.end());
+            println!("{start}, {end}");
             if start <= end {
-                ret.mappings.push((dst.clone(), start..=end));
+                let dst_start = *dst.start() + (start - src.start());
+                mappings.push((dst_start..=(dst_start + (end - start)), start..=end))
             }
         }
-        ret
-    }
-    fn compose(&self, other: &Self) -> Self {
-        let mut res = Map {
-            mappings: Vec::new(),
-        };
-        let mappings = other
-            .mappings
-            .iter()
-            .map(|(dst, src)| {
-                let mappings = other
-                    .restrict(dst)
-                    .mappings
-                    .iter()
-                    .map(|(dst, _)| (dst.clone(), src.clone()))
-                    .collect();
-                Map { mappings }
-            })
-            .collect::<Vec<_>>();
-        for mut map in mappings {
-            res.mappings.append(&mut map.mappings);
-        }
-        todo!()
+        Map { mappings }
     }
 }
 
@@ -99,6 +76,11 @@ pub fn part1(src: &str) -> Result<String, String> {
 }
 
 pub fn part2(src: &str) -> Result<String, String> {
-    let _data = parse_input(src).ok_or("Failed to parse file")?;
+    let data = parse_input(src).ok_or("Failed to parse file")?;
+    let seeds = data.seeds.chunks(2).collect::<Vec<_>>();
+    println!(
+        "{:#?}",
+        data.maps[0].get_range(seeds[0][0]..=(seeds[0][1] + seeds[0][0] - 1))
+    );
     todo!()
 }
