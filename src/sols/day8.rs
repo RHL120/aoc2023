@@ -62,7 +62,8 @@ pub fn part1(input: &str) -> Result<String, String> {
             curr = net.paths[next_name];
             (next_name != "ZZZ").then_some(net.paths[next_name])
         })
-        .count();
+        .count()
+        + 1;
     Ok(res.to_string())
 }
 
