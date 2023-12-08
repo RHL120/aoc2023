@@ -74,7 +74,8 @@ pub fn part2(input: &str) -> Result<String, String> {
     let steps: Vec<u128> = net
         .paths
         .keys()
-        .filter_map(|&k| (k.ends_with('A')).then(|| simulate(&net, k, |x| x.ends_with('Z'))))
+        .filter(|&&k| (k.ends_with('A')))
+        .map(|&k| simulate(&net, k, |x| x.ends_with('Z')))
         .collect();
     let res = steps.iter().fold(1, |n, m| math::lcm(n, *m));
     Ok(res.to_string())
