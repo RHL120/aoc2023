@@ -79,3 +79,18 @@ pub fn part2(input: &str) -> Result<String, String> {
     let res = steps.iter().fold(1, |n, m| math::lcm(n, *m));
     Ok(res.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_part1() {
+        let input = "LLR\n\nAAA = (BBB, BBB)\nBBB = (AAA, ZZZ)\nZZZ = (ZZZ, ZZZ)\n";
+        assert_eq!(part1(input).unwrap(), "6")
+    }
+    #[test]
+    fn test_part2() {
+        let input = "LR\n\n11A = (11B, XXX)\n11B = (XXX, 11Z)\n11Z = (11B, XXX)\n22A = (22B, XXX)\n22B = (22C, 22C)\n22C = (22Z, 22Z)\n22Z = (22B, 22B)\nXXX = (XXX, XXX)";
+        assert_eq!(part2(input).unwrap(), "6")
+    }
+}
