@@ -1,3 +1,4 @@
+use crate::utils::math;
 use crate::utils::parser;
 use std::collections::HashMap;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -29,7 +30,6 @@ fn parse_input(input: &str) -> Option<Network> {
             let (name, line) = (line.get(..3)?, line.get(3..)?);
             let (_, line) = parser::parse_const(line, " = ")?;
             let (left, right) = parser::parse_delimited(line, "(", ")", true, |s| {
-                println!("{s}");
                 let (left, s) = (s.get(..3)?, s.get(3..)?);
                 let (_, s) = parser::parse_const(s, ", ")?;
                 let (right, s) = (s.get(..3)?, s.get(3..)?);
@@ -47,7 +47,6 @@ fn parse_input(input: &str) -> Option<Network> {
 
 pub fn part1(input: &str) -> Result<String, String> {
     let net = parse_input(input).ok_or("Failed to parse input")?;
-    println!("{:#?}", net);
     let mut curr = net.paths["AAA"];
     let res = net
         .instructions
@@ -68,5 +67,33 @@ pub fn part1(input: &str) -> Result<String, String> {
 }
 
 pub fn part2(input: &str) -> Result<String, String> {
-    todo!()
+    let net = parse_input(input).ok_or("Failed to parse input")?;
+    let steps: Vec<u128> = net
+        .paths
+        .keys()
+        .filter_map(|&k| {
+            if !k.ends_with("A") {
+                return None;
+            }
+            let mut curr = net.paths[k];
+            let res = net
+                .instructions
+                .iter()
+                .cycle()
+                .map_while(|e| {
+                    let (l, r) = curr;
+                    let next_name = match e {
+                        Instruction::Left => l,
+                        Instruction::Right => r,
+                    };
+                    curr = net.paths[next_name];
+                    (!next_name.ends_with('Z')).then_some(net.paths[next_name])
+                })
+                .count()
+                + 1;
+            Some(res as u128)
+        })
+        .collect();
+    let res = steps.iter().fold(1, |n, m| math::lcm(n, *m));
+    Ok(res.to_string())
 }
