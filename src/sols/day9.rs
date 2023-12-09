@@ -2,7 +2,7 @@ fn parse_input(input: &str) -> Option<Vec<Vec<i128>>> {
     input
         .lines()
         .map(|line| {
-            line.split(" ")
+            line.split(' ')
                 .map(|x| x.parse::<i128>().ok())
                 .collect::<Option<Vec<_>>>()
         })
@@ -67,13 +67,25 @@ pub fn part2(input: &str) -> Result<String, String> {
                 } else {
                     let last = *dsq[i].first().unwrap();
                     let dlast = *dsq[i + 1].first().unwrap();
-                    println!("{last} - {dlast} = {}", last - dlast);
                     dsq[i].insert(0, last - dlast)
                 }
             }
-            println!("{}", *dsq[0].last().unwrap());
             *dsq[0].first().unwrap()
         })
         .sum();
     Ok(s.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    const INPUT: &str = "0 3 6 9 12 15\n1 3 6 10 15 21\n10 13 16 21 30 45";
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(INPUT).unwrap(), "114");
+    }
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(INPUT).unwrap(), "2");
+    }
 }
