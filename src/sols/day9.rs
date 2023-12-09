@@ -54,5 +54,26 @@ pub fn part1(input: &str) -> Result<String, String> {
 }
 
 pub fn part2(input: &str) -> Result<String, String> {
-    todo!()
+    let data = parse_input(input).ok_or("Failed to parse input")?;
+    let s: i128 = data
+        .iter()
+        .map(|x| {
+            let mut dsq = diff_seq(x);
+            let mut i = dsq.len();
+            while i > 0 {
+                i -= 1;
+                if i == dsq.len() - 1 {
+                    dsq[i].insert(0, 0);
+                } else {
+                    let last = *dsq[i].first().unwrap();
+                    let dlast = *dsq[i + 1].first().unwrap();
+                    println!("{last} - {dlast} = {}", last - dlast);
+                    dsq[i].insert(0, last - dlast)
+                }
+            }
+            println!("{}", *dsq[0].last().unwrap());
+            *dsq[0].first().unwrap()
+        })
+        .sum();
+    Ok(s.to_string())
 }
