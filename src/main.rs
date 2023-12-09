@@ -25,6 +25,7 @@ const SOLVERS: &[&[Solver]] = &[
     &[day6::part1, day6::part2],
     &[day7::part1, day7::part2],
     &[day8::part1, day8::part2],
+    &[day9::part1, day9::part2],
 ];
 fn main() -> Result<(), String> {
     let usage_string = "Usage: ./aoc2023 <day> <part> <input>";
